@@ -3,12 +3,12 @@ import org.junit.Before;
 import org.junit.Test;
 import representation.Transaction;
 
-import java.time.Instant;
-
 import static org.junit.Assert.*;
 
 
 public class TransactionServiceTest {
+
+    private static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
 
     private TransactionService transactionService;
     @Before
@@ -17,28 +17,81 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void shouldSaveATransaction() throws Exception {
-        Transaction transaction = new Transaction(12.3, Instant.now().toEpochMilli());
+    public void shouldJoinMultiplesTransactionsInOne() {
+        Transaction transactionA = new Transaction(12.3, 1478192204000l);
+        Transaction transactionB = new Transaction(12.3, 1478192204000l + 1);
 
-        transactionService.save(transaction);
-        assertEquals(transactionService.getAll().size(), 1);
+        transactionService.add(transactionA);
+        transactionService.add(transactionB);
+
+
+        StatisticModel statisticModel = new StatisticModel(24.6, 2, 1478192204000l);
+
+        assertEquals(statisticModel, transactionService.getFirstStatistic());
     }
 
     @Test
-    public void shouldSaveMultiplesTransactions() {
+    public void shouldCreateANewStatistic() {
         Transaction transactionA = new Transaction(12.3, 1478192204000l);
-        Transaction transactionB = new Transaction(12.3, 1478192204000l + 1);
-        Transaction transactionC = new Transaction(12.3, 1478192204000l + 10);
-        Transaction transactionD = new Transaction(12.3, 1478192204000l + 20);
+        Transaction transactionB = new Transaction(12.3, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
 
-        transactionService.save(transactionA);
-        transactionService.save(transactionB);
-        transactionService.save(transactionC);
-        transactionService.save(transactionD);
+        transactionService.add(transactionA);
+        transactionService.add(transactionB);
 
-        StatisticModel statisticModel = new StatisticModel(49.2, 4, 1478192205000l);
+        StatisticModel statisticModel = new StatisticModel(12.3, 1,
+                1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
 
+        assertEquals(statisticModel, transactionService.getFirstStatistic());
+    }
 
+    @Test
+    public void shouldJoinANewStatisticWithTheLastRecent() {
+        Transaction transactionA = new Transaction(12.3, 1478192204000l);
+        Transaction transactionB = new Transaction(12.3, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+        Transaction transactionC = new Transaction(12.3, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 100);
+
+        transactionService.add(transactionA);
+        transactionService.add(transactionB);
+        transactionService.add(transactionC);
+
+        StatisticModel statisticModel = new StatisticModel(24.6, 2,
+                1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+
+        assertEquals(statisticModel, transactionService.getFirstStatistic());
+    }
+
+    @Test
+    public void shouldConsidereTheMaxAmount() {
+        Transaction transactionA = new Transaction(12.3, 1478192204000l);
+        Transaction transactionB = new Transaction(10.0, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+        Transaction transactionC = new Transaction(12.3, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 100);
+
+        transactionService.add(transactionA);
+        transactionService.add(transactionB);
+        transactionService.add(transactionC);
+
+        StatisticModel statisticModel = new StatisticModel(22.3, 2,
+                1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+
+        assertEquals(statisticModel, transactionService.getFirstStatistic());
+        assertEquals(12.3, transactionService.getFirstStatistic().getMax(), 0.0);
+    }
+
+    @Test
+    public void shouldConsidereTheMinAmount() {
+        Transaction transactionA = new Transaction(12.3, 1478192204000l);
+        Transaction transactionB = new Transaction(10.0, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+        Transaction transactionC = new Transaction(12.3, 1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 100);
+
+        transactionService.add(transactionA);
+        transactionService.add(transactionB);
+        transactionService.add(transactionC);
+
+        StatisticModel statisticModel = new StatisticModel(22.3, 2,
+                1478192204000l + SIXTY_SENCONDS_IN_MILLISECONDS + 5);
+
+        assertEquals(statisticModel, transactionService.getFirstStatistic());
+        assertEquals(10.0, transactionService.getFirstStatistic().getMin(), 0.0);
     }
 
 }
