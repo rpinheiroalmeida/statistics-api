@@ -5,7 +5,7 @@ import model.StatisticModel;
 
 import java.math.BigDecimal;
 
-public class Statistic {
+public class StatisticView {
 
     private BigDecimal sum;
     private BigDecimal avg;
@@ -13,7 +13,7 @@ public class Statistic {
     private double min;
     private int count;
 
-    public Statistic(BigDecimal sum, BigDecimal avg, double max, double min, int count) {
+    public StatisticView(BigDecimal sum, BigDecimal avg, double max, double min, int count) {
         this.sum = sum;
         this.avg = avg;
         this.max = max;
@@ -21,8 +21,8 @@ public class Statistic {
         this.count = count;
     }
 
-    public static Statistic of(StatisticModel statisticModel) {
-        return new Statistic(statisticModel.getTotalAmount(),
+    public static StatisticView of(StatisticModel statisticModel) {
+        return new StatisticView(statisticModel.getTotalAmount(),
                 statisticModel.getAvg(),
                 statisticModel.getMax(),
                 statisticModel.getMin(),

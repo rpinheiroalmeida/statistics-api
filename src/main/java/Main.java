@@ -1,5 +1,5 @@
 import com.google.gson.Gson;
-import representation.Statistic;
+import representation.StatisticView;
 import representation.Transaction;
 
 import static spark.Spark.*;
@@ -26,7 +26,7 @@ public class Main {
         });
 
         get("/statistics", (request, response) ->
-                new Gson().toJson(Statistic.of(service.getFirstStatistic()))
+                new Gson().toJson(StatisticView.of(service.getFirstStatistic()))
         );
     }
 }
