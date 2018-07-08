@@ -2,8 +2,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -14,19 +13,11 @@ import static org.hamcrest.Matchers.*;
 
 public class TransactionsFunctionalTest {
 
-    @Before
-    public void setUp() throws InterruptedException {
+    @BeforeClass
+    public static void setUp() throws InterruptedException {
         Main.start();
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 4567;
-        Thread.sleep(10000l);
-    }
-
-    @After
-    public void tearDown() throws InterruptedException {
-        Main.stop();
-        Main.start();
-        Thread.sleep(10000l);
     }
 
 
@@ -81,9 +72,9 @@ public class TransactionsFunctionalTest {
     @Test
     public void get_multipleStatisticsWithDifferentAmounts_sucess() {
 
-        callTransaction(9.5, 10000l);
-        callTransaction(7.5, 20000l);
-        callTransaction(10.0, 20000l);
+        callTransaction(9.5, 80000l);
+        callTransaction(7.5, 90000l);
+        callTransaction(10.0, 70000l);
 
         get("/statistics").then().statusCode(200).assertThat()
                 .body("count", equalTo(3))
