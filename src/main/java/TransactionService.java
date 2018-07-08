@@ -16,11 +16,11 @@ public class TransactionService {
         validate(transaction);
         Statistic statistic = statisticQueue.poll();
         if (existInQueue(statistic)) {
-            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.getTimestamp()));
+            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
         } else if (statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp())) {
             statisticQueue.add(statistic.sum(transaction.getAmount()));
         } else {
-            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.getTimestamp()));
+            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
         }
     }
 

@@ -24,8 +24,6 @@ public class TransactionServiceTest {
 
     @Test
     public void shouldJoinMultiplesTransactionsInOneInEuropeTimeZone() throws Exception {
-        System.out.println(now.plusMillis(10000).toEpochMilli());
-
         Instant nowEuropeTimeZone = Instant.now(Clock.system(ZoneId.of("Europe/Paris")));
         Transaction transactionA = new Transaction(12.3, nowEuropeTimeZone.toEpochMilli());
         Transaction transactionB = new Transaction(12.3, nowEuropeTimeZone.plusMillis(10).toEpochMilli());
@@ -33,7 +31,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionA);
         transactionService.add(transactionB);
 
-        Statistic statistic = new Statistic(24.6, 2, nowEuropeTimeZone.toEpochMilli());
+        Statistic statistic = new Statistic(24.6, 2, nowEuropeTimeZone);
 
         assertEquals(statistic, transactionService.getFirstStatistic());
     }
@@ -47,7 +45,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionB);
 
 
-        Statistic statistic = new Statistic(24.6, 2, now.toEpochMilli());
+        Statistic statistic = new Statistic(24.6, 2, now);
 
         assertEquals(statistic, transactionService.getFirstStatistic());
     }
@@ -60,7 +58,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionA);
         transactionService.add(transactionB);
 
-        Statistic statistic = new Statistic(12.3, 1, now.toEpochMilli() + SIXTY_SENCONDS_IN_MILLISECONDS + 100);
+        Statistic statistic = new Statistic(12.3, 1, now.plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS + 100));
 
         assertEquals(statistic, transactionService.getFirstStatistic());
     }
@@ -73,7 +71,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionA);
         transactionService.add(transactionB);
 
-        Statistic statistic = new Statistic(24.6, 2, now.toEpochMilli());
+        Statistic statistic = new Statistic(24.6, 2, now);
 
         assertEquals(statistic, transactionService.getFirstStatistic());
     }
@@ -88,7 +86,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionB);
         transactionService.add(transactionC);
 
-        Statistic statistic = new Statistic(34.6, 3, now.toEpochMilli());
+        Statistic statistic = new Statistic(34.6, 3, now);
 
         assertEquals(statistic, transactionService.getFirstStatistic());
         assertEquals(12.3, transactionService.getFirstStatistic().getMax(), 0.0);
@@ -104,7 +102,7 @@ public class TransactionServiceTest {
         transactionService.add(transactionB);
         transactionService.add(transactionC);
 
-        Statistic statistic = new Statistic(31.30, 3, now.toEpochMilli());
+        Statistic statistic = new Statistic(31.30, 3, now);
 
         assertEquals(statistic, transactionService.getFirstStatistic());
         assertEquals(9.0, transactionService.getFirstStatistic().getMin(), 0.0);

@@ -15,9 +15,9 @@ public class Statistic {
     private BigDecimal totalAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_UP);
 
 
-    public Statistic(double amount, int count, long timestamp) {
+    public Statistic(double amount, int count, Instant timestamp) {
         this.count = count;
-        this.timestampInstant = Instant.ofEpochMilli(timestamp).plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
+        this.timestampInstant = timestamp.plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
 
         this.totalAmount = this.totalAmount.add(BigDecimal.valueOf(amount));
         this.max = Math.max(max, amount);
@@ -29,7 +29,7 @@ public class Statistic {
     public Statistic sum(double amount) {
         return new Statistic(amount,
                     this.count +1,
-                    timestampInstant.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS).toEpochMilli())
+                    timestampInstant.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS))
                 .add(this.totalAmount.add(BigDecimal.valueOf(amount)))
                 .max(this.max, amount)
                 .min(this.min, amount);

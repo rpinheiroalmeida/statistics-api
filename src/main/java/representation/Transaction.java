@@ -1,5 +1,7 @@
 package representation;
 
+import java.time.Instant;
+
 public class Transaction {
 
     private double amount;
@@ -18,6 +20,10 @@ public class Transaction {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public Instant ofInstant() {
+        return Instant.ofEpochMilli(timestamp);
     }
 
 }
