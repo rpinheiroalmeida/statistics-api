@@ -1,15 +1,15 @@
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
 import java.util.stream.IntStream;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 public class TransactionsFunctionalTest {
 
