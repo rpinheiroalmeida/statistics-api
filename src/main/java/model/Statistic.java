@@ -8,7 +8,7 @@ public class Statistic {
     public static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
 
     private final int count;
-    private final Instant timestampInstant;
+    private final Instant timestamp;
 
     private double max = Double.MIN_VALUE;
     private double min = Double.MAX_VALUE;
@@ -17,19 +17,17 @@ public class Statistic {
 
     public Statistic(double amount, int count, Instant timestamp) {
         this.count = count;
-        this.timestampInstant = timestamp.plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
+        this.timestamp = timestamp.plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
 
         this.totalAmount = this.totalAmount.add(BigDecimal.valueOf(amount));
         this.max = Math.max(max, amount);
         this.min = Math.min(min, amount);
     }
 
-
-
     public Statistic sum(double amount) {
         return new Statistic(amount,
                     this.count +1,
-                    timestampInstant.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS))
+                    timestamp.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS))
                 .add(this.totalAmount.add(BigDecimal.valueOf(amount)))
                 .max(this.max, amount)
                 .min(this.min, amount);
@@ -51,7 +49,7 @@ public class Statistic {
     }
 
     public boolean shouldBelongToNextSixtySeconds(long nextTimestamp) {
-        return this.timestampInstant.toEpochMilli() > nextTimestamp;
+        return this.timestamp.toEpochMilli() > nextTimestamp;
     }
 
     public double getMax() {
@@ -78,7 +76,7 @@ public class Statistic {
         Statistic that = (Statistic) o;
 
         if (count != that.count) return false;
-        if (timestampInstant != null ? !timestampInstant.equals(that.timestampInstant) : that.timestampInstant != null)
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null)
             return false;
         return totalAmount != null ? totalAmount.equals(that.totalAmount) : that.totalAmount == null;
 
@@ -87,7 +85,7 @@ public class Statistic {
     @Override
     public int hashCode() {
         int result = count;
-        result = 31 * result + (timestampInstant != null ? timestampInstant.hashCode() : 0);
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (totalAmount != null ? totalAmount.hashCode() : 0);
         return result;
     }
@@ -97,7 +95,7 @@ public class Statistic {
         return "Statistic{" +
                 "totalAmount=" + totalAmount +
                 ", count=" + count +
-                ", timestamp=" + timestampInstant +
+                ", timestamp=" + timestamp +
                 '}';
     }
 

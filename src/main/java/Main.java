@@ -7,6 +7,7 @@ import static spark.Spark.*;
 public class Main {
 
     private static TransactionService service = new TransactionService();
+
     public static void main(String[] args) {
 
         get("/welcome", (req, res) -> "Welcome to statistics API");
