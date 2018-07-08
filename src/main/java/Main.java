@@ -12,10 +12,16 @@ public class Main {
         get("/welcome", (req, res) -> "Welcome to statistics API");
 
         post("/transactions", (request, response) -> {
-            Transaction transaction = new Gson().fromJson(request.body(), Transaction.class);
+            try {
+                Transaction transaction = new Gson().fromJson(request.body(), Transaction.class);
 
-            service.add(transaction);
-            response.status(201);
+                service.add(transaction);
+                response.status(201);
+            } catch (Exception e) {
+                response.status(204);
+            }
+
+
             return "";
         });
 

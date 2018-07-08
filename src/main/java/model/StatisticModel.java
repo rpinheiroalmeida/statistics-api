@@ -1,13 +1,14 @@
 package model;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 public class StatisticModel {
 
-    private static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
+    public static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
 
     private final int count;
-    private final long timestamp;
+    private final Instant timestampInstant;
 
     private double max = Double.MIN_VALUE;
     private double min = Double.MAX_VALUE;
@@ -16,17 +17,19 @@ public class StatisticModel {
 
     public StatisticModel(double amount, int count, long timestamp) {
         this.count = count;
-        this.timestamp = timestamp + SIXTY_SENCONDS_IN_MILLISECONDS;
+        this.timestampInstant = Instant.ofEpochMilli(timestamp).plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
 
         this.totalAmount = this.totalAmount.add(BigDecimal.valueOf(amount));
         this.max = Math.max(max, amount);
         this.min = Math.min(min, amount);
     }
 
+
+
     public StatisticModel sum(double amount) {
         return new StatisticModel(amount,
                     this.count +1,
-                    timestamp - SIXTY_SENCONDS_IN_MILLISECONDS)
+                    timestampInstant.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS).toEpochMilli())
                 .add(this.totalAmount.add(BigDecimal.valueOf(amount)))
                 .max(this.max, amount)
                 .min(this.min, amount);
@@ -48,7 +51,7 @@ public class StatisticModel {
     }
 
     public boolean shouldBelongToNextSixtySeconds(long nextTimestamp) {
-        return this.timestamp > nextTimestamp;
+        return this.timestampInstant.toEpochMilli() > nextTimestamp;
     }
 
     public double getMax() {
@@ -75,14 +78,16 @@ public class StatisticModel {
         StatisticModel that = (StatisticModel) o;
 
         if (count != that.count) return false;
-        if (timestamp != that.timestamp) return false;
+        if (timestampInstant != null ? !timestampInstant.equals(that.timestampInstant) : that.timestampInstant != null)
+            return false;
         return totalAmount != null ? totalAmount.equals(that.totalAmount) : that.totalAmount == null;
+
     }
 
     @Override
     public int hashCode() {
         int result = count;
-        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
+        result = 31 * result + (timestampInstant != null ? timestampInstant.hashCode() : 0);
         result = 31 * result + (totalAmount != null ? totalAmount.hashCode() : 0);
         return result;
     }
@@ -92,7 +97,7 @@ public class StatisticModel {
         return "StatisticModel{" +
                 "totalAmount=" + totalAmount +
                 ", count=" + count +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timestampInstant +
                 '}';
     }
 
