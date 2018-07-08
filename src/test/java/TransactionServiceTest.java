@@ -24,6 +24,7 @@ public class TransactionServiceTest {
 
     @Test
     public void shouldJoinMultiplesTransactionsInOneInEuropeTimeZone() throws Exception {
+        System.out.println(Instant.now().toEpochMilli());
         Instant nowEuropeTimeZone = Instant.now(Clock.system(ZoneId.of("Europe/Paris")));
         Transaction transactionA = new Transaction(12.3, nowEuropeTimeZone.toEpochMilli());
         Transaction transactionB = new Transaction(12.3, nowEuropeTimeZone.plusMillis(10).toEpochMilli());

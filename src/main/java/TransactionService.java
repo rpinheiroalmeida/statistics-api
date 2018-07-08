@@ -3,9 +3,11 @@ import representation.Transaction;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import static model.Statistic.EMPTY_STATISTIC;
 import static model.Statistic.SIXTY_SENCONDS_IN_MILLISECONDS;
 
 public class TransactionService {
@@ -15,13 +17,16 @@ public class TransactionService {
     public void add(Transaction transaction) throws Exception {
         validate(transaction);
         Statistic statistic = statisticQueue.poll();
-        if (notExistInQueue(statistic)) {
-            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
-        } else if (statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp())) {
+
+        if (shouldProcessTransaction(transaction, statistic)) {
             statisticQueue.add(statistic.sum(transaction.getAmount()));
         } else {
             statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
         }
+    }
+
+    private boolean shouldProcessTransaction(Transaction transaction, Statistic statistic) {
+        return existInQueue(statistic) && statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp());
     }
 
     private void validate(Transaction transaction) throws Exception {
@@ -31,11 +36,12 @@ public class TransactionService {
         }
     }
 
-    private boolean notExistInQueue(Statistic first) {
-        return first == null;
+    private boolean existInQueue(Statistic first) {
+        return first != null;
     }
 
     public Statistic getFirstStatistic() {
-        return statisticQueue.peek();
+        Statistic statistic = statisticQueue.peek();
+        return statistic == null ? EMPTY_STATISTIC : statistic;
     }
 }

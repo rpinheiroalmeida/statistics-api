@@ -7,6 +7,8 @@ public final class Statistic {
 
     public static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
 
+    public static final Statistic EMPTY_STATISTIC = new Statistic(0.0, 0, Instant.now());
+
     private final int count;
     private final Instant timestamp;
     private final double max;
@@ -55,7 +57,7 @@ public final class Statistic {
     }
 
     public BigDecimal getAvg() {
-        return totalAmount.divide(BigDecimal.valueOf(count));
+        return count == 0 ? BigDecimal.ZERO : totalAmount.divide(BigDecimal.valueOf(count), BigDecimal.ROUND_UP);
     }
 
     public BigDecimal getTotalAmount() {

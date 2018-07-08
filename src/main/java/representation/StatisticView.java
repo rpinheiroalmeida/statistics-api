@@ -4,6 +4,7 @@ package representation;
 import model.Statistic;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class StatisticView {
 
