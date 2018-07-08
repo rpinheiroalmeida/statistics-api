@@ -9,10 +9,6 @@ public class Main {
 
     private static TransactionService service = new TransactionService();
 
-    public static void stop() {
-        Spark.stop();
-    }
-
     public static void main(String[] args) {
         start();
     }
