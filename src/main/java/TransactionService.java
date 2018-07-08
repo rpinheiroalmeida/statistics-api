@@ -15,7 +15,7 @@ public class TransactionService {
     public void add(Transaction transaction) throws Exception {
         validate(transaction);
         Statistic statistic = statisticQueue.poll();
-        if (existInQueue(statistic)) {
+        if (notExistInQueue(statistic)) {
             statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
         } else if (statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp())) {
             statisticQueue.add(statistic.sum(transaction.getAmount()));
@@ -31,11 +31,7 @@ public class TransactionService {
         }
     }
 
-    private boolean shouldBelongToNextSixtySeconds(Transaction transaction, Statistic statistic) {
-        return statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp());
-    }
-
-    private boolean existInQueue(Statistic first) {
+    private boolean notExistInQueue(Statistic first) {
         return first == null;
     }
 
