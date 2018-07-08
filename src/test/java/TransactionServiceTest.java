@@ -110,9 +110,8 @@ public class TransactionServiceTest {
 
     @Test(expected = Exception.class)
     public void shouldThrowExceptionWhenTimestampIsOlderThanSixtySeconds() throws Exception {
-        Transaction transaction = new Transaction(12.3, now.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS + 5).toEpochMilli());
-
-        transactionService.add(transaction);
+        transactionService.add(new Transaction(12.3, now.toEpochMilli()));
+        transactionService.add(new Transaction(12.3, now.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS + 5).toEpochMilli()));
     }
 
 }

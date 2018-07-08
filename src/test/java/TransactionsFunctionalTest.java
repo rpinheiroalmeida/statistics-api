@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class TransactionsFunctionalTest {
 
+    private Instant now = Instant.now();
     @BeforeClass
     public static void setUp() throws InterruptedException {
         Main.start();
@@ -23,7 +24,7 @@ public class TransactionsFunctionalTest {
 
     @Test
     public void post_transactionShouldReturnStatusCode_201()   {
-        callTransaction(8.5, 20000l);
+        callTransaction(8.5, 80000l);
     }
 
     @Test
@@ -44,7 +45,7 @@ public class TransactionsFunctionalTest {
 
     @Test
     public void get_statisticsShould_thenSuccess() {
-        callTransaction(8.5, 20000l);
+        callTransaction(8.5, 0l);
 
         get("/statistics").then().statusCode(200).assertThat()
                 .body("count", equalTo(1))
@@ -56,9 +57,24 @@ public class TransactionsFunctionalTest {
     }
 
     @Test
+    public void get_multipleStatisticsWithDifferentAmounts_sucess() {
+
+        callTransaction(9.5, 80000l);
+        callTransaction(7.5, 80101);
+        callTransaction(10.0, 80202l);
+
+        get("/statistics").then().statusCode(200).assertThat()
+                .body("count", equalTo(3))
+                .body("sum", equalTo(27.0f))
+                .body("avg", equalTo(9.0f))
+                .body("max", equalTo(10.0f))
+                .body("min", equalTo(7.5f));
+    }
+
+    @Test
     public void get_multipleStatistics_sucess() {
-        IntStream.range(1, 5).parallel().forEach(i -> {
-            callTransaction(8.5, 10000l * i);
+        IntStream.rangeClosed(1, 5).forEach(i -> {
+            callTransaction(8.5, 60000l + 2*i);
         });
 
         get("/statistics").then().statusCode(200).assertThat()
@@ -69,27 +85,12 @@ public class TransactionsFunctionalTest {
                 .body("min", equalTo(8.5f));
     }
 
-    @Test
-    public void get_multipleStatisticsWithDifferentAmounts_sucess() {
-
-        callTransaction(9.5, 80000l);
-        callTransaction(7.5, 90000l);
-        callTransaction(10.0, 70000l);
-
-        get("/statistics").then().statusCode(200).assertThat()
-                .body("count", equalTo(3))
-                .body("sum", equalTo(27.0f))
-                .body("avg", equalTo(9.0f))
-                .body("max", equalTo(10.0f))
-                .body("min", equalTo(7.5f));
-    }
-
     private void callTransaction(double amount, long afterMilliSeconds) {
         String apiBody =
                 String.format("{\n" +
                         "\t\"amount\": %f,\n" +
                         "\t\"timestamp\": %s\n" +
-                        "}", amount, Instant.now().plusMillis(afterMilliSeconds).toEpochMilli() );
+                        "}", amount, now.plusMillis(afterMilliSeconds).toEpochMilli() );
 
         RequestSpecification requestSpec = new RequestSpecBuilder()
                 .setBody(apiBody)

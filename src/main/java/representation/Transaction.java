@@ -25,5 +25,4 @@ public class Transaction {
     public Instant ofInstant() {
         return Instant.ofEpochMilli(timestamp);
     }
-
 }

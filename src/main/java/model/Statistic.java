@@ -98,4 +98,8 @@ public final class Statistic {
     public int getCount() {
         return this.count;
     }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
 }

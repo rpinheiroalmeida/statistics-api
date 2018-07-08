@@ -15,10 +15,10 @@ public class TransactionService {
     private Queue<Statistic> statisticQueue = new ConcurrentLinkedDeque<>();
 
     public void add(Transaction transaction) throws Exception {
-        validate(transaction);
         Statistic statistic = statisticQueue.poll();
 
         if (shouldProcessTransaction(transaction, statistic)) {
+            validate(transaction, statistic);
             statisticQueue.add(statistic.sum(transaction.getAmount()));
         } else {
             statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.ofInstant()));
@@ -29,10 +29,11 @@ public class TransactionService {
         return existInQueue(statistic) && statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp());
     }
 
-    private void validate(Transaction transaction) throws Exception {
-        long diffAsMillis = transaction.ofInstant().until(Instant.now(), ChronoUnit.MILLIS);
+    private void validate(Transaction transaction, Statistic statistic) throws Exception {
+        long diffAsMillis = transaction.ofInstant().until(statistic.getTimestamp(), ChronoUnit.MILLIS);
         if (diffAsMillis > SIXTY_SENCONDS_IN_MILLISECONDS) {
-          throw new Exception("Transaction is older than 60 seconds.");
+          throw new Exception(String.format("Transaction (%s) is older than 60 seconds from the last transaction(%s).",
+                  transaction.getTimestamp(), statistic.getTimestamp().toEpochMilli()));
         }
     }
 
