@@ -4,7 +4,6 @@ import representation.Transaction;
 import spark.Spark;
 
 import static spark.Spark.*;
-import static spark.Spark.stop;
 
 public class Main {
 

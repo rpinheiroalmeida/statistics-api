@@ -21,7 +21,7 @@ public final class Statistic {
         this.timestamp = timestamp.plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
 
         this.totalAmount = BigDecimal.valueOf(amount);
-        this.max = Math.max(Double.MIN_VALUE, amount);
+        this.max = Math.max(0.0, amount);
         this.min = Math.min(Double.MAX_VALUE, amount);
     }
 
