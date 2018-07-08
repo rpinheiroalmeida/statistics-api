@@ -1,7 +1,7 @@
 package representation;
 
 
-import model.StatisticModel;
+import model.Statistic;
 
 import java.math.BigDecimal;
 
@@ -21,11 +21,11 @@ public class StatisticView {
         this.count = count;
     }
 
-    public static StatisticView of(StatisticModel statisticModel) {
-        return new StatisticView(statisticModel.getTotalAmount(),
-                statisticModel.getAvg(),
-                statisticModel.getMax(),
-                statisticModel.getMin(),
-                statisticModel.getCount());
+    public static StatisticView of(Statistic statistic) {
+        return new StatisticView(statistic.getTotalAmount(),
+                statistic.getAvg(),
+                statistic.getMax(),
+                statistic.getMin(),
+                statistic.getCount());
     }
 }

@@ -3,7 +3,7 @@ package model;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public class StatisticModel {
+public class Statistic {
 
     public static final long SIXTY_SENCONDS_IN_MILLISECONDS = 60000L;
 
@@ -15,7 +15,7 @@ public class StatisticModel {
     private BigDecimal totalAmount = BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_UP);
 
 
-    public StatisticModel(double amount, int count, long timestamp) {
+    public Statistic(double amount, int count, long timestamp) {
         this.count = count;
         this.timestampInstant = Instant.ofEpochMilli(timestamp).plusMillis(SIXTY_SENCONDS_IN_MILLISECONDS);
 
@@ -26,8 +26,8 @@ public class StatisticModel {
 
 
 
-    public StatisticModel sum(double amount) {
-        return new StatisticModel(amount,
+    public Statistic sum(double amount) {
+        return new Statistic(amount,
                     this.count +1,
                     timestampInstant.minusMillis(SIXTY_SENCONDS_IN_MILLISECONDS).toEpochMilli())
                 .add(this.totalAmount.add(BigDecimal.valueOf(amount)))
@@ -35,17 +35,17 @@ public class StatisticModel {
                 .min(this.min, amount);
     }
 
-    private StatisticModel min(double oldAlmount, double newAmount) {
+    private Statistic min(double oldAlmount, double newAmount) {
         this.min = Math.min(oldAlmount, newAmount);
         return this;
     }
 
-    private StatisticModel max(double oldAmount, double newAmount) {
+    private Statistic max(double oldAmount, double newAmount) {
         this.max = Math.max(oldAmount, newAmount);
         return this;
     }
 
-    private StatisticModel add(BigDecimal amount) {
+    private Statistic add(BigDecimal amount) {
         this.totalAmount = amount;
         return this;
     }
@@ -75,7 +75,7 @@ public class StatisticModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StatisticModel that = (StatisticModel) o;
+        Statistic that = (Statistic) o;
 
         if (count != that.count) return false;
         if (timestampInstant != null ? !timestampInstant.equals(that.timestampInstant) : that.timestampInstant != null)
@@ -94,7 +94,7 @@ public class StatisticModel {
 
     @Override
     public String toString() {
-        return "StatisticModel{" +
+        return "Statistic{" +
                 "totalAmount=" + totalAmount +
                 ", count=" + count +
                 ", timestamp=" + timestampInstant +

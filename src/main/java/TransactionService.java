@@ -1,29 +1,26 @@
-import model.StatisticModel;
+import model.Statistic;
 import representation.Transaction;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static java.time.temporal.ChronoUnit.MILLIS;
-import static model.StatisticModel.SIXTY_SENCONDS_IN_MILLISECONDS;
+import static model.Statistic.SIXTY_SENCONDS_IN_MILLISECONDS;
 
 public class TransactionService {
 
-    private Queue<StatisticModel> statisticModelQueue = new ConcurrentLinkedDeque<>();
+    private Queue<Statistic> statisticQueue = new ConcurrentLinkedDeque<>();
 
     public void add(Transaction transaction) throws Exception {
         validate(transaction);
-        StatisticModel statisticModel = statisticModelQueue.poll();
-        if (existInQueue(statisticModel)) {
-            statisticModelQueue.add(new StatisticModel(transaction.getAmount(), 1, transaction.getTimestamp()));
-        } else if (statisticModel.shouldBelongToNextSixtySeconds(transaction.getTimestamp())) {
-            statisticModelQueue.add(statisticModel.sum(transaction.getAmount()));
+        Statistic statistic = statisticQueue.poll();
+        if (existInQueue(statistic)) {
+            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.getTimestamp()));
+        } else if (statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp())) {
+            statisticQueue.add(statistic.sum(transaction.getAmount()));
         } else {
-            statisticModelQueue.add(new StatisticModel(transaction.getAmount(), 1, transaction.getTimestamp()));
+            statisticQueue.add(new Statistic(transaction.getAmount(), 1, transaction.getTimestamp()));
         }
     }
 
@@ -34,15 +31,15 @@ public class TransactionService {
         }
     }
 
-    private boolean shouldBelongToNextSixtySeconds(Transaction transaction, StatisticModel statisticModel) {
-        return statisticModel.shouldBelongToNextSixtySeconds(transaction.getTimestamp());
+    private boolean shouldBelongToNextSixtySeconds(Transaction transaction, Statistic statistic) {
+        return statistic.shouldBelongToNextSixtySeconds(transaction.getTimestamp());
     }
 
-    private boolean existInQueue(StatisticModel first) {
+    private boolean existInQueue(Statistic first) {
         return first == null;
     }
 
-    public StatisticModel getFirstStatistic() {
-        return statisticModelQueue.peek();
+    public Statistic getFirstStatistic() {
+        return statisticQueue.peek();
     }
 }
