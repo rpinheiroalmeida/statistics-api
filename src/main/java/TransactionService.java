@@ -30,7 +30,7 @@ public class TransactionService {
     }
 
     private void validate(Transaction transaction) throws Exception {
-        long diffAsMillis = Instant.ofEpochMilli(transaction.getTimestamp()).until(Instant.now(), ChronoUnit.MILLIS);
+        long diffAsMillis = transaction.ofInstant().until(Instant.now(), ChronoUnit.MILLIS);
         if (diffAsMillis > SIXTY_SENCONDS_IN_MILLISECONDS) {
           throw new Exception("Transaction is older than 60 seconds.");
         }
